@@ -1,0 +1,43 @@
+{
+  "name": "io-next",
+  "version": "1.0.0",
+  "description": "Micro Functional Reactive Programming (FRP) Framework with Monad structure",
+  "type": "module",
+  "module": "./code/dist/esm/timeline-monad.js",
+  "types": "./code/dist/esm/timeline-monad.d.ts",
+  "files": [
+    "code/dist/",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stken2050/io-next.git"
+  },
+  "keywords": [
+    "frp",
+    "functional",
+    "reactive",
+    "IO",
+    "timeline",
+    "monad"
+  ],
+  "author": "Ken Okabe <stken2050@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stken2050/io-next/issues"
+  },
+  "homepage": "https://github.com/stken2050/io-next#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "*",
+    "@types/node": "*",
+    "typescript": "https://typescript.visualstudio.com/cf7ac146-d525-443c-b23c-0d58337efebc/_apis/build/builds/74014/artifacts?artifactName=tgz&fileId=53B4D99407A93B4AF6FAEF8437B02126A8C7FEC62F1C3307DAA098F75D2CE5D602&fileName=/typescript-4.0.0-insiders.20200515.tgz"
+  },
+  "jest": {
+    "testEnvironment": "jest-environment-node",
+    "transform": {}
+  }
+}
