@@ -9,15 +9,15 @@ test("ioAB = allThenResetIO" +
         //--------------------------
         const ioA = IO();
         const ioB = ioA
-            .sync((a) => a * 2);
+        ['->']((a) => a * 2);
         const ioAB = allThenResetIO(
             [ioA, ioB]);
         ioAB
-            .sync((arr) => expect(arr).toEqual([1, 2]));
+        ['->']((arr) => expect(arr).toEqual([1, 2]));
         ioA.next = 1;
         //--------------------------
         //async test helper
-        ioAB.sync(True(done));
+        ioAB['->'](True(done));
     });
 test("ioAB = allThenResetIO" +
     "([ioA, ioB]) multi", (done) => {
@@ -26,7 +26,7 @@ test("ioAB = allThenResetIO" +
         const ioB = IO();
         const ioAB = allThenResetIO([ioA, ioB]);
         ioAB
-            .sync((arr) => expect(arr).toEqual(expectedIO.now));
+        ['->']((arr) => expect(arr).toEqual(expectedIO.now));
 
         const expectedIO = IO();
 
@@ -58,5 +58,5 @@ test("ioAB = allThenResetIO" +
         }
         //--------------------------
         //async test helper
-        ioAB.sync(True(done));
+        ioAB['->'](True(done));
     });

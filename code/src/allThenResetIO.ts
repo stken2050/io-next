@@ -20,7 +20,7 @@ const allThenResetIO =
         (right
           (
             ios.map((io, index) =>
-              io.sync(() =>
+              io['->'](() =>
                 ((uMask: number[]) =>
                   (target: number[]) =>
                     flagIO.next = mm(uMask)(target))
@@ -31,7 +31,7 @@ const allThenResetIO =
             )
           )
           (
-            flagIO.sync(
+            flagIO['->'](
               (flags: number[]) =>
                 self.next = //all  updated?
                 (flags.reduce((a: number, b: number) => (a * b))

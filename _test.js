@@ -3,7 +3,7 @@ import { allThenResetIO } from "./code/dist/allThenResetIO.js";
 
 {
   const a = IO(self => 99);
-  a.sync(console.log);
+  a['->'](console.log);
 
   console.log("code finished");
   /*
