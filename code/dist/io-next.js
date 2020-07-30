@@ -22,11 +22,11 @@ const io = (ev) => ((currentVal) => ({
     } // using function(), this, return inside object
 }))(undefined); //currentVal
 const operator = // leftIO['->'](f) = newIO
- (ev) => (leftIO) => (f) => (IO((self) => ((ff) => third(ev.register(ff)) //<1> register the sync function
+ (ev) => (leftIO) => (f) => IO((self) => ((ff) => third(ev.register(ff)) //<1> register the sync function
 (ff(leftIO.now)) //<2> trigger sync-self on joint
 (self.now) //<3> return init value on joint
 )(monadF(f)(self)) //ff
-));
+);
 const monadF = (f) => (self) => ((val) => val === undefined
     ? undefined
     : ((nextVal) => 
