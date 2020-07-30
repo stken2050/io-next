@@ -38,16 +38,16 @@ const io = (ev: { register: Function, trigger: Function }) =>
 const operator = // leftIO['->'](f) = newIO
   (ev: { register: Function, trigger: Function }) =>
     (leftIO: IO) => (f: Function) =>
-      IO((self: IO) =>
+      IO((selfIO: IO) =>
         ((ff: Function) =>
           third
             (ev.register(ff))//<1> register the sync function
             (ff(leftIO.now)) //<2> trigger sync-self on joint
-            (self.now)//<3> return init value on joint
-        )(monadF(f)(self))//ff
+            (selfIO.now)//<3> return init value on joint
+        )(monadF(f)(selfIO))//ff
       );
 
-const monadF = (f: Function) => (self: IO) =>
+const monadF = (f: Function) => (selfIO: IO) =>
   ((val: unknown) =>
     val === undefined
       ? undefined
@@ -57,8 +57,8 @@ const monadF = (f: Function) => (self: IO) =>
           ? undefined
           : nextVal.type === "monad"
             ? nextVal['->']((val: unknown) =>
-              self.next = val)
-            : self.next = nextVal /*&& (log(self.now))*/
+              selfIO.next = val)
+            : selfIO.next = nextVal /*&& (log(self.now))*/
         ))(f(val))//nextVal
   );
 

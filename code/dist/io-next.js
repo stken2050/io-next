@@ -22,20 +22,20 @@ const io = (ev) => ((currentVal) => ({
     } // using function(), this, return inside object
 }))(undefined); //currentVal
 const operator = // leftIO['->'](f) = newIO
- (ev) => (leftIO) => (f) => IO((self) => ((ff) => third(ev.register(ff)) //<1> register the sync function
+ (ev) => (leftIO) => (f) => IO((selfIO) => ((ff) => third(ev.register(ff)) //<1> register the sync function
 (ff(leftIO.now)) //<2> trigger sync-self on joint
-(self.now) //<3> return init value on joint
-)(monadF(f)(self)) //ff
+(selfIO.now) //<3> return init value on joint
+)(monadF(f)(selfIO)) //ff
 );
-const monadF = (f) => (self) => ((val) => val === undefined
+const monadF = (f) => (selfIO) => ((val) => val === undefined
     ? undefined
     : ((nextVal) => 
     // RightIdentity: join/flat = TTX => TX
     (nextVal === undefined
         ? undefined
         : nextVal.type === "monad"
-            ? nextVal['->']((val) => self.next = val)
-            : self.next = nextVal /*&& (log(self.now))*/))(f(val)) //nextVal
+            ? nextVal['->']((val) => selfIO.next = val)
+            : selfIO.next = nextVal /*&& (log(self.now))*/))(f(val)) //nextVal
 );
 const IO = (initFunction = (io) => undefined) => ((io) => right(io.next = initFunction(io))(io) // return the normalized io(reactive) monad
 )(io(events([]))); //call by need for each
