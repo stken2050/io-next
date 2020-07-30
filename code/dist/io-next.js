@@ -2,40 +2,32 @@ const log = (msg) => (console.log(typeof msg === "function"
     ? msg
     : JSON.stringify(msg))
     , msg);
-const customOperator = (op) => (set) => (f) => Object.defineProperty(set, op, {
-    value: function (a) {
-        return f(this)(a);
-    },
-    enumerable: false,
-    configurable: false,
-    writable: false
-});
-const identity = (a) => a;
+const right = (a) => (b) => b;
 const third = (a) => (b) => (c) => c;
 const events = (observers) => ({
     register: (f) => (observers[observers.length] = f),
     trigger: (val) => observers.map((f) => f(val))
 });
-//lazy declaration = call by need for each io
-const io = () => ((currentVal) => ({
+//lazy io declaration = call by need for each io
+const io = (ev) => ((currentVal) => ({
     type: "monad",
-    ev: events([]),
     get now() {
         return currentVal;
     },
     set next(nextVal) {
-        this.ev.trigger(currentVal = nextVal);
+        ev.trigger(currentVal = nextVal);
     },
-    "->": identity //just a placeholder for type
-}))(undefined);
-const IO = (initFunction = (io) => undefined) => ((io) => third(customOperator("->")(io)((leftIO) => (f) => (IO((self) => ((ff) => third(leftIO.ev.register(ff)) //<1> register the sync function
+    "->": function (f) {
+        return operator(ev)(this)(f); // leftIO['->'](f) = newIO
+    } // using function(), this, return inside object
+}))(undefined); //currentVal
+const operator = // leftIO['->'](f) = newIO
+ (ev) => (leftIO) => (f) => (IO((self) => ((ff) => third(ev.register(ff)) //<1> register the sync function
 (ff(leftIO.now)) //<2> trigger sync-self on joint
 (self.now) //<3> return init value on joint
-)(syncF(f)(self)) //ff
-)))) //just initialization and no trigger since there's no sync yet
-(io.next = initFunction(io))(io) //finally, return the normalized io(reactive) monad
-)(io()); //call by need for each
-const syncF = (f) => (self) => ((val) => val === undefined
+)(monadF(f)(self)) //ff
+));
+const monadF = (f) => (self) => ((val) => val === undefined
     ? undefined
     : ((nextVal) => 
     // RightIdentity: join/flat = TTX => TX
@@ -45,4 +37,6 @@ const syncF = (f) => (self) => ((val) => val === undefined
             ? nextVal['->']((val) => self.next = val)
             : self.next = nextVal /*&& (log(self.now))*/))(f(val)) //nextVal
 );
+const IO = (initFunction = (io) => undefined) => ((io) => right(io.next = initFunction(io))(io) // return the normalized io(reactive) monad
+)(io(events([]))); //call by need for each
 export { IO };

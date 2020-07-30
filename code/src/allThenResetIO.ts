@@ -26,7 +26,7 @@ const allThenResetIO =
                     flagIO.next = mm(uMask)(target))
                   (ios.map(io =>
                     io.now === undefined ? 0 : 1))
-                  (replace(flagIO.now)(index)(1))
+                  (replace(flagIO.now as number[])(index)(1))
               )
             )
           )

@@ -1,11 +1,7 @@
 interface IO {
     type: string;
-    ev: {
-        register: Function;
-        trigger: Function;
-    };
-    now: any;
-    next: any;
+    now: unknown;
+    next: unknown;
     "->": Function;
 }
 declare const IO: (initFunction?: Function) => any;
