@@ -6,8 +6,11 @@ interface IO {
   "->": Function;
 }
 
-const identity = (a: any) => a;
-const third = (a: any) => (b: any) => (c: any) => c;
+const log = (msg: unknown) => (console.log(
+  typeof msg === "function"
+    ? msg
+    : JSON.stringify(msg))
+  , msg);
 
 const customOperator =
   (op: string) =>
@@ -24,11 +27,8 @@ const customOperator =
             writable: false
           });
 
-const log = (msg: unknown) => (console.log(
-  typeof msg === "function"
-    ? msg
-    : JSON.stringify(msg))
-  , msg);
+const identity = (a: any) => a;
+const third = (a: any) => (b: any) => (c: any) => c;
 
 const events = (observers: Function[]) => ({
   register: (f: Function) =>
@@ -36,6 +36,37 @@ const events = (observers: Function[]) => ({
   trigger: (val: any) =>
     observers.map((f: Function) => f(val))
 });
+
+//lazy declaration = call by need for each io
+const io = () => ((currentVal: any) => ({
+  type: "monad",  //for TTX => TX
+  ev: events([]),
+  get now() { //getter returns a value of now
+    return currentVal;
+  },
+  set next(nextVal: unknown) {
+    this.ev.trigger(currentVal = nextVal);
+  }, //log("next:" + nextVal);
+  "->": identity  //just a placeholder for type
+}))(undefined);
+
+const IO = (initFunction: Function = (io: IO) => undefined) =>
+  (
+    (io: IO) => third
+      (customOperator("->")(io)(
+        (leftIO: IO) => (f: Function) => (
+          IO((self: IO) =>
+            ((ff: Function) =>
+              third
+                (leftIO.ev.register(ff))//<1> register the sync function
+                (ff(leftIO.now)) //<2> trigger sync-self on joint
+                (self.now)//<3> return init value on joint
+            )(syncF(f)(self))//ff
+          ))
+      )) //just initialization and no trigger since there's no sync yet
+      (io.next = initFunction(io))
+      (io) //finally, return the normalized io(reactive) monad
+  )(io()); //call by need for each
 
 const syncF = (f: Function) => (self: IO) =>
   ((val: unknown) =>
@@ -50,37 +81,6 @@ const syncF = (f: Function) => (self: IO) =>
               self.next = val)
             : self.next = nextVal /*&& (log(self.now))*/
         ))(f(val))//nextVal
-  );
-
-const IO = (initFunction: Function = (io: IO) => undefined) =>
-  (
-    (io: IO) => third
-      (customOperator("->")(io)(
-        (leftIO: IO) => (f: Function) => (
-          IO((self: IO) =>
-            ((ff: Function) =>
-              third //<1> first, register the sync function
-                (leftIO.ev.register(ff))
-                //<2> trigger sync-self by the left operand on joint
-                (ff(leftIO.now))
-                (self.now)//<3> returns init value on joint
-            )(syncF(f)(self))//ff
-          ))
-      ))  //just initialization and no trigger since there's no sync yet
-      (io.next = initFunction(io))
-      (io)
-  )(
-    ((currentVal: any) => ({
-      type: "monad",  //for TTX => TX
-      ev: events([]),
-      get now() { //getter returns a value of now
-        return currentVal;
-      },
-      set next(nextVal: unknown) {
-        this.ev.trigger(currentVal = nextVal);
-      }, //log("next:" + nextVal);
-      "->": identity  //just a placeholder for type
-    }))(undefined)
   );
 
 export { IO };
