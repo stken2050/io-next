@@ -3,6 +3,8 @@ interface IO {
   now: unknown;
   next: unknown;
   "->": Function;
+  register: Function;
+  trigger: Function;
 }
 
 const log = (msg: unknown) => (console.log(
@@ -14,38 +16,33 @@ const log = (msg: unknown) => (console.log(
 const right = (a: any) => (b: any) => b;
 const third = (a: any) => (b: any) => (c: any) => c;
 
-const events = (observers: Function[]) => ({
-  register: (f: Function) =>
-    (observers[observers.length] = f),
-  trigger: (val: unknown) =>
-    observers.map((f: Function) => f(val))
-});
 //lazy io declaration = call by need for each io
-const io = (ev: { register: Function, trigger: Function }) =>
+const io = (ev: Function[]) =>// empty events
   ((currentVal: unknown): IO => ({
     type: "monad",  //for TTX => TX
     get now() { //getter returns a value of now
       return currentVal;
     },
     set next(nextVal: unknown) {
-      ev.trigger(currentVal = nextVal);
+      this.trigger(currentVal = nextVal);
     }, //log("next:" + nextVal);
     "->": function (f: Function) {
-      return operator(ev)(this)(f) // leftIO['->'](f) = newIO
-    }// using function(), this, return inside object
+      return operator(this)(f) // leftIO['->'](f) = newIO
+    },// using function(), this, return inside object
+    register: (f: Function) => (ev[ev.length] = f),
+    trigger: (val: unknown) => ev.map((f: Function) => f(val))
   }))(undefined);//currentVal
 
 const operator = // leftIO['->'](f) = newIO
-  (ev: { register: Function, trigger: Function }) =>
-    (leftIO: IO) => (f: Function) =>
-      IO((selfIO: IO) =>
-        ((ff: Function) =>
-          third
-            (ev.register(ff))//<1> register the sync function
-            (ff(leftIO.now)) //<2> trigger sync-self on joint
-            (selfIO.now)//<3> return init value on joint
-        )(monadF(f)(selfIO))//ff
-      );
+  (leftIO: IO) => (f: Function) =>
+    IO((selfIO: IO) =>
+      ((ff: Function) =>
+        third
+          (leftIO.register(ff))//<1> register the sync function
+          (ff(leftIO.now)) //<2> trigger sync-self on joint
+          (selfIO.now)//<3> return init value on joint
+      )(monadF(f)(selfIO))//ff
+    );
 
 const monadF = (f: Function) => (selfIO: IO) =>
   ((val: unknown) =>
@@ -66,6 +63,6 @@ const IO = (initFunction: Function = (io: IO) => undefined) =>
   ((io: IO) => right
     (io.next = initFunction(io))
     (io) // return the normalized io(reactive) monad
-  )(io(events([]))); //call by need for each
+  )(io([])); //call by need for each empty events
 
 export { IO };

@@ -4,25 +4,24 @@ const log = (msg) => (console.log(typeof msg === "function"
     , msg);
 const right = (a) => (b) => b;
 const third = (a) => (b) => (c) => c;
-const events = (observers) => ({
-    register: (f) => (observers[observers.length] = f),
-    trigger: (val) => observers.map((f) => f(val))
-});
 //lazy io declaration = call by need for each io
-const io = (ev) => ((currentVal) => ({
+const io = (ev) => // empty events
+ ((currentVal) => ({
     type: "monad",
     get now() {
         return currentVal;
     },
     set next(nextVal) {
-        ev.trigger(currentVal = nextVal);
+        this.trigger(currentVal = nextVal);
     },
     "->": function (f) {
-        return operator(ev)(this)(f); // leftIO['->'](f) = newIO
-    } // using function(), this, return inside object
+        return operator(this)(f); // leftIO['->'](f) = newIO
+    },
+    register: (f) => (ev[ev.length] = f),
+    trigger: (val) => ev.map((f) => f(val))
 }))(undefined); //currentVal
 const operator = // leftIO['->'](f) = newIO
- (ev) => (leftIO) => (f) => IO((selfIO) => ((ff) => third(ev.register(ff)) //<1> register the sync function
+ (leftIO) => (f) => IO((selfIO) => ((ff) => third(leftIO.register(ff)) //<1> register the sync function
 (ff(leftIO.now)) //<2> trigger sync-self on joint
 (selfIO.now) //<3> return init value on joint
 )(monadF(f)(selfIO)) //ff
@@ -38,5 +37,5 @@ const monadF = (f) => (selfIO) => ((val) => val === undefined
             : selfIO.next = nextVal /*&& (log(self.now))*/))(f(val)) //nextVal
 );
 const IO = (initFunction = (io) => undefined) => ((io) => right(io.next = initFunction(io))(io) // return the normalized io(reactive) monad
-)(io(events([]))); //call by need for each
+)(io([])); //call by need for each empty events
 export { IO };
