@@ -1,7 +1,7 @@
-import { IO } from "./io-next.js";
+import { IO, next } from "./io-next.js";
 
-const left = (a: any) => (b: any) => a;
 const right = (a: any) => (b: any) => b;
+const third = (a: any) => (b: any) => (c: any) => c;
 
 const replace = (arr: number[]) =>
   (index: number) =>
@@ -14,36 +14,39 @@ const mm = (A: number[]) => (B: number[]) =>
 
 const allThenResetIO =
   (ios: IO[]): IO =>
-    ((flagIO: IO) =>
-      IO((self: IO) => left
-        (undefined)
-        (right
+
+    ((newIO: IO) =>
+      ((flagIO: IO) =>
+        third
           (
             ios.map((io, index) =>
-              io['->'](() =>
+              io['>>'](() =>
                 ((uMask: number[]) =>
                   (target: number[]) =>
-                    flagIO.next = mm(uMask)(target))
+                    flagIO |> next(mm(uMask)(target)))
                   (ios.map(io =>
-                    io.now === undefined ? 0 : 1))
-                  (replace(flagIO.now as number[])(index)(1))
+                    io.lastVal === undefined ? 0 : 1))
+                  (replace(flagIO.lastVal as number[])(index)(1))
               )
             )
           )
           (
-            flagIO['->'](
+            flagIO['>>'](
               (flags: number[]) =>
-                self.next = //all  updated?
-                (flags.reduce((a: number, b: number) => (a * b))
-                  === 1)
-                  ? left
-                    (ios.map((io) => io.now))
-                    (flagIO.next = Array(ios.length).fill(0))
-                  : undefined//no trigger
+                newIO |> next(  //all  updated?
+                  (flags.reduce((a: number, b: number) => (a * b))
+                    === 1)
+                    ? right//clear flag
+                      (flagIO |> next(Array(ios.length).fill(0)))
+                      (ios.map((io) => io.lastVal))//trigger!!
+                    : undefined//no trigger
+                )
             )
           )
-        )
-      )
-    )(IO((self: IO) => Array(ios.length).fill(0)));
+          (newIO)
+
+      )(IO(Array(ios.length).fill(0)))//flagIO
+    )(IO(undefined)) //new IO
+
 
 export { allThenResetIO };

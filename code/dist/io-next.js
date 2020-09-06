@@ -1,41 +1,40 @@
-const log = (msg) => (console.log(typeof msg === "function"
-    ? msg
-    : JSON.stringify(msg))
-    , msg);
 const right = (a) => (b) => b;
-const third = (a) => (b) => (c) => c;
-//lazy io declaration = call by need for each io
-const io = (ev) => // empty events
- ((currentVal) => ({
-    type: "monad",
-    get now() {
-        return currentVal;
+const log = (msg) => right(console.log(typeof msg === "function"
+    ? msg
+    : JSON.stringify(msg)))(msg);
+//----------------------------
+// dirty object hack
+const customOperator = (op) => (f) => (set) => right(Object.defineProperty(set, op, {
+    value: function (a) {
+        return f(a)(this);
     },
-    set next(nextVal) {
-        this.trigger(currentVal = nextVal);
-    },
-    "->": function (f) {
-        return operator(this)(f); // leftIO['->'](f) = newIO
-    },
-    register: (f) => (ev[ev.length] = f),
-    trigger: (val) => ev.map((f) => f(val))
-}))(undefined); //currentVal
-const operator = // leftIO['->'](f) = newIO
- (leftIO) => (f) => IO((selfIO) => ((ff) => third(leftIO.register(ff)) //<1> register the sync function
-(ff(leftIO.now)) //<2> trigger sync-self on joint
-(selfIO.now) //<3> return init value on joint
-)(monadF(f)(selfIO)) //ff
-);
-const monadF = (f) => (selfIO) => ((val) => val === undefined
+    enumerable: false,
+    configurable: false,
+    writable: false
+}))(set);
+//-------------------------
+const fa = (a) => (f) => a === undefined
     ? undefined
-    : ((nextVal) => 
-    // RightIdentity: join/flat = TTX => TX
-    (nextVal === undefined
-        ? undefined
-        : nextVal.type === "monad"
-            ? nextVal['->']((val) => selfIO.next = val)
-            : selfIO.next = nextVal /*&& (log(self.now))*/))(f(val)) //nextVal
-);
-const IO = (initFunction = (io) => undefined) => ((io) => right(io.next = initFunction(io))(io) // return the normalized io(reactive) monad
-)(io([])); //call by need for each empty events
-export { IO };
+    : f(a);
+const flatRegister = (f) => (A) => // flatRegister(f): A => B
+ (B => right(A.list = //mutable
+    A.list //add B-function to A-list
+        .concat((a) => flatTrigger(fa(a)(f))(B)))((flatTrigger(fa(A.lastVal)(f))(B))))(IO(undefined)); //B = new IO
+const flatTrigger = (a) => (A) => a === undefined
+    ? A
+    : a.type === "monad" //flat TTX=TX
+        ? trigger(a.lastVal)(A)
+        : trigger(a)(A);
+const trigger = (a) => (A) => right(right(A.lastVal = a) //mutable
+(A.list.map((f) => fa(a)(f))) //trigger f in list
+)(A);
+//spreadsheel cell corresponds to IO
+//the last element of infinite list (git)
+//https://en.wikipedia.org/wiki/Persistent_data_structure
+const IO = (a) => customOperator('>>')(flatRegister)(({
+    lastVal: a,
+    list: [],
+    type: "monad"
+}));
+const next = flatTrigger;
+export { IO, next };

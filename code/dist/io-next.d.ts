@@ -1,10 +1,9 @@
 interface IO {
     type: string;
-    now: unknown;
-    next: unknown;
-    "->": Function;
-    register: Function;
-    trigger: Function;
+    lastVal: unknown;
+    list: Function[];
+    ">>": Function;
 }
-declare const IO: (initFunction?: Function) => any;
-export { IO };
+declare const IO: (a: unknown) => IO;
+declare const next: (a: unknown) => (A: IO) => any;
+export { IO, next };
