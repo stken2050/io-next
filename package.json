@@ -9,6 +9,9 @@
     "code/dist/",
     "LICENSE"
   ],
+  "scripts": {
+    "watch": "tsc -w -p ./code/; "
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stken2050/io-next.git"

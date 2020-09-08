@@ -34,7 +34,7 @@ import { allThenResetIO } from "../../code/dist/allThenResetIO.js";
         } //filled and cleared
     }
     {
-        next([1, 9])(expectedIO);
+        next([3, 9])(expectedIO);
         next(1)(ioA);
         {
             next(undefined)(ioA);

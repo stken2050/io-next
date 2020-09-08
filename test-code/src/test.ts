@@ -30,7 +30,6 @@ import { allThenResetIO } from "../../code/dist/allThenResetIO.js";
 
   expectedIO['>>'](console.log);
 
-
   {
     expectedIO |> next([1, 5]);
 
@@ -48,7 +47,7 @@ import { allThenResetIO } from "../../code/dist/allThenResetIO.js";
     } //filled and cleared
   }
   {
-    expectedIO |> next([1, 9]);
+    expectedIO |> next([3, 9]);
     ioA |> next(1);
     {
       ioA |> next(undefined);

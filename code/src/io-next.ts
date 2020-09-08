@@ -1,9 +1,3 @@
-interface IO {
-  type: string;
-  lastVal: unknown;
-  list: Function[];
-  ">>": Function;
-}
 
 const right = (a: any) => (b: any) => b;
 
@@ -14,6 +8,8 @@ const log = (msg: unknown) =>
         ? msg
         : JSON.stringify(msg)))
     (msg);
+
+const undefinedCheck = (a: unknown) => (a == null);// ==
 
 //----------------------------
 // dirty object hack
@@ -36,7 +32,7 @@ const customOperator =
 //-------------------------
 
 const fa = (a: unknown) => (f: Function) =>
-  a === undefined
+  undefinedCheck(a)
     ? undefined
     : f(a);
 
@@ -50,11 +46,9 @@ const flatRegister = (f: Function) =>
     )(IO(undefined)) //B = new IO
 
 const flatTrigger = (a: unknown) => (A: IO) =>
-  a === undefined
-    ? A
-    : (a as IO).type === "monad"//flat TTX=TX
-      ? A|> trigger((a as IO).lastVal)
-      : A|> trigger(a);
+  "lastVal" in Object(a)   //flat TTX=TX
+    ? A|> trigger((a as IO).lastVal)
+    : A|> trigger(a);
 
 const trigger = (a: unknown) =>
   (A: IO) => right(right
@@ -68,10 +62,15 @@ const trigger = (a: unknown) =>
 const IO = (a: unknown): IO => ({
   lastVal: a, //mutable
   list: [], //mutable
-  type: "monad"
 })
   |> customOperator('>>')(flatRegister);
 
 const next = flatTrigger;
+
+interface IO {
+  lastVal: unknown;
+  list: Function[];
+  ">>": Function;
+}
 
 export { IO, next };
