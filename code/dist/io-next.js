@@ -21,9 +21,9 @@ const flatRegister = (f) => (A) => // flatRegister(f): A => B
  (B => right(A.list = //mutable
     A.list //add B-function to A-list
         .concat((a) => flatTrigger(fa(a)(f))(B)))((flatTrigger(fa(A.lastVal)(f))(B))))(IO(undefined)); //B = new IO
-const flatTrigger = (a) => (A) => "lastVal" in Object(a) //flat TTX=TX
-    ? trigger(a.lastVal)(A)
-    : trigger(a)(A);
+const flatTrigger = (a) => (A) => (aObject => // object | IO
+ "lastVal" in aObject //flat TTX=TX
+    ? trigger(aObject.lastVal)(A) : trigger(a)(A))(Object(a));
 const trigger = (a) => (A) => right(right(A.lastVal = a) //mutable
 (A.list.map((f) => fa(a)(f))) //trigger f in list
 )(A);

@@ -46,9 +46,11 @@ const flatRegister = (f: Function) =>
     )(IO(undefined)) //B = new IO
 
 const flatTrigger = (a: unknown) => (A: IO) =>
-  "lastVal" in Object(a)   //flat TTX=TX
-    ? A|> trigger((a as IO).lastVal)
-    : A|> trigger(a);
+  (aObject => // object | IO
+    "lastVal" in aObject   //flat TTX=TX
+      ? A|> trigger(aObject.lastVal)
+      : A|> trigger(a)
+  )(Object(a) as object | IO);
 
 const trigger = (a: unknown) =>
   (A: IO) => right(right
