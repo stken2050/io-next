@@ -8,10 +8,7 @@ const undefinedCheck = (a) => (a == null); // ==
 const customOperator = (op) => (f) => (set) => Object.defineProperty(set, op, {
     value: function (a) {
         return f(a)(this);
-    },
-    enumerable: false,
-    configurable: false,
-    writable: false
+    }
 });
 //-------------------------
 const fa = (a) => (f) => undefinedCheck(a)

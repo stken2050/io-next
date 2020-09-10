@@ -17,16 +17,11 @@ const customOperator =
   (op: string) =>
     (f: Function) =>
       (set: Object) =>
-        Object.defineProperty(
-          set, op,
-          {
-            value: function (a: unknown) {
-              return f(a)(this)
-            },
-            enumerable: false,
-            configurable: false,
-            writable: false
-          });
+        Object.defineProperty(set, op, {
+          value: function (a: unknown) {
+            return f(a)(this)
+          }
+        });
 //-------------------------
 
 const fa = (a: unknown) => (f: Function) =>
