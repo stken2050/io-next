@@ -5,14 +5,14 @@ const log = (msg) => right(console.log(typeof msg === "function"
 const undefinedCheck = (a) => (a == null); // ==
 //----------------------------
 // dirty object hack
-const customOperator = (op) => (f) => (set) => right(Object.defineProperty(set, op, {
+const customOperator = (op) => (f) => (set) => Object.defineProperty(set, op, {
     value: function (a) {
         return f(a)(this);
     },
     enumerable: false,
     configurable: false,
     writable: false
-}))(set);
+});
 //-------------------------
 const fa = (a) => (f) => undefinedCheck(a)
     ? undefined
@@ -22,8 +22,9 @@ const flatRegister = (f) => (A) => // flatRegister(f): A => B
     A.list //add B-function to A-list
         .concat((a) => flatTrigger(fa(a)(f))(B)))((flatTrigger(fa(A.lastVal)(f))(B))))(IO(undefined)); //B = new IO
 const flatTrigger = (a) => (A) => (aObject => // object | IO
- "lastVal" in aObject //flat TTX=TX
-    ? trigger(aObject.lastVal)(A) : trigger(a)(A))(Object(a));
+ "lastVal" in aObject //pattern match
+    ? trigger(aObject.lastVal)(A) //flat TTX=TX
+ : trigger(a)(A))(Object(a)); //primitive wrapped into object
 const trigger = (a) => (A) => right(right(A.lastVal = a) //mutable
 (A.list.map((f) => fa(a)(f))) //trigger f in list
 )(A);

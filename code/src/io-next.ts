@@ -16,8 +16,8 @@ const undefinedCheck = (a: unknown) => (a == null);// ==
 const customOperator =
   (op: string) =>
     (f: Function) =>
-      (set: Object) => right
-        (Object.defineProperty(
+      (set: Object) =>
+        Object.defineProperty(
           set, op,
           {
             value: function (a: unknown) {
@@ -26,9 +26,7 @@ const customOperator =
             enumerable: false,
             configurable: false,
             writable: false
-          })
-        )
-        (set);
+          });
 //-------------------------
 
 const fa = (a: unknown) => (f: Function) =>
@@ -47,10 +45,10 @@ const flatRegister = (f: Function) =>
 
 const flatTrigger = (a: unknown) => (A: IO) =>
   (aObject => // object | IO
-    "lastVal" in aObject   //flat TTX=TX
-      ? A|> trigger(aObject.lastVal)
+    "lastVal" in aObject //pattern match
+      ? A|> trigger(aObject.lastVal) //flat TTX=TX
       : A|> trigger(a)
-  )(Object(a) as object | IO);
+  )(Object(a) as object | IO); //primitive wrapped into object
 
 const trigger = (a: unknown) =>
   (A: IO) => right(right
