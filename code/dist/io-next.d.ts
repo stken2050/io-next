@@ -1,5 +1,5 @@
 declare const IO: (a: unknown) => IO;
-declare const next: (a: unknown) => (A: IO) => any;
+declare const next: (a: unknown) => (A: IO) => IO;
 interface IO {
     lastVal: unknown;
     list: Function[];

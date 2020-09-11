@@ -1,12 +1,9 @@
 
-const right = (a: any) => (b: any) => b;
+const right = <T>(a: T) => <U>(b: U) => b;
 
 const log = (msg: unknown) =>
   right
-    (console.log(
-      typeof msg === "function"
-        ? msg
-        : JSON.stringify(msg)))
+    (console.log(msg))
     (msg);
 
 const undefinedCheck = (a: unknown) => (a == null);// ==
@@ -19,7 +16,7 @@ const customOperator =
       (set: Object) =>
         Object.defineProperty(set, op, {
           value: function (a: unknown) {
-            return f(a)(this)
+            return f(a)(this);
           }
         });
 //-------------------------

@@ -1,7 +1,5 @@
 const right = (a) => (b) => b;
-const log = (msg) => right(console.log(typeof msg === "function"
-    ? msg
-    : JSON.stringify(msg)))(msg);
+const log = (msg) => right(console.log(msg))(msg);
 const undefinedCheck = (a) => (a == null); // ==
 //----------------------------
 // dirty object hack
