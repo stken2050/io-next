@@ -1,4 +1,3 @@
-
 const right = <T>(a: T) => <U>(b: U) => b;
 
 const log = (msg: unknown) =>
@@ -7,6 +6,10 @@ const log = (msg: unknown) =>
     (msg);
 
 const undefinedCheck = (a: unknown) => (a == null);// ==
+const optionMap = (f: Function) => (a: unknown) =>
+  undefinedCheck(a)
+    ? undefined
+    : f(a);
 
 //----------------------------
 // dirty object hack
@@ -21,18 +24,13 @@ const customOperator =
         });
 //-------------------------
 
-const fa = (a: unknown) => (f: Function) =>
-  undefinedCheck(a)
-    ? undefined
-    : f(a);
-
 const flatRegister = (f: Function) =>
   (A: IO) => // flatRegister(f): A => B
     (B => right
       (A.list = //mutable
         A.list//add B-function to A-list
-          .concat((a: unknown) => B|> flatTrigger(fa(a)(f))))
-      (B|> flatTrigger(fa(A.lastVal)(f)))
+          .concat((a: unknown) => B|> flatTrigger(a |> optionMap(f))))
+      (B|> flatTrigger(A.lastVal |> optionMap(f)))
     )(IO(undefined)) //B = new IO
 
 const flatTrigger = (a: unknown) => (A: IO) =>
@@ -45,7 +43,7 @@ const flatTrigger = (a: unknown) => (A: IO) =>
 const trigger = (a: unknown) =>
   (A: IO) => right(right
     (A.lastVal = a) //mutable
-    (A.list.map((f: Function) => fa(a)(f)))//trigger f in list
+    (A.list.map(f => a |> optionMap(f)))//trigger f in list
   )(A);
 
 //spreadsheel cell corresponds to IO
