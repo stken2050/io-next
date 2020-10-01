@@ -8,7 +8,7 @@
     ],
     "outDir": "./dist",
     "rootDir": "./src",
-    "strict": true,
+    "strict": true, //"strictNullChecks": true, included
     "declaration": true,
   }
 }

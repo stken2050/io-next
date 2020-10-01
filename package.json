@@ -10,7 +10,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "watch": "tsc -w -p ./code/; "
+    "test": "tsc -p ./code/; tsc -p ./test-code; node ./test-code/dist/test.js"
   },
   "repository": {
     "type": "git",

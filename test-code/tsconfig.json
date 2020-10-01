@@ -9,6 +9,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": false,
+    "strictNullChecks": true,
     "declaration": false,
   }
 }
