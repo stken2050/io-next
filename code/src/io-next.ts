@@ -5,13 +5,13 @@ const log = (msg: unknown) =>
     (console.log(msg))
     (msg);
 
-type Undefindable<T> = NonNullable<T> | undefined;
+type Option<T> = NonNullable<T> | undefined;
 
-const undefinedCheck = <T>(a: Undefindable<T>) =>
+const undefinedCheck = <T>(a: Option<T>) =>
   (a == null);// ==
 
 const optionMap = (f: Function) =>
-  <T>(a: Undefindable<T>) =>
+  <T>(a: Option<T>) =>
     undefinedCheck(a)
       ? undefined
       : f(a);
@@ -22,7 +22,7 @@ const customOperator =
     (f: Function) =>
       (set: Object) =>
         Object.defineProperty(set, op, {
-          value: function <T>(a: Undefindable<T>) {
+          value: function <T>(a: Option<T>) {
             return f(a)(this);
           }
         });
@@ -33,18 +33,18 @@ const flatRegister = (f: Function) =>
     (B => right
       (A.list = //mutable
         A.list//add B-function to A-list
-          .concat(<T>(a: Undefindable<T>) => B|> flatTrigger(a |> optionMap(f))))
+          .concat(<T>(a: Option<T>) => B|> flatTrigger(a |> optionMap(f))))
       (B|> flatTrigger(A.lastVal |> optionMap(f)))
     )(IO(undefined)) //B = new IO
 
-const flatTrigger = <T>(a: Undefindable<T>) => (A: IO) =>
+const flatTrigger = <T>(a: Option<T>) => (A: IO) =>
   (aObject => // object | IO
     "lastVal" in aObject //pattern match
       ? A|> trigger(aObject.lastVal) //flat TTX=TX
       : A|> trigger(a)
   )(Object(a) as object | IO); //primitive wrapped into object
 
-const trigger = <T>(a: Undefindable<T>) =>
+const trigger = <T>(a: Option<T>) =>
   (A: IO) => right(right
     (A.lastVal = a) //mutable
     (A.list.map(f => a |> optionMap(f)))//trigger f in list
@@ -53,7 +53,7 @@ const trigger = <T>(a: Undefindable<T>) =>
 //spreadsheel cell corresponds to IO
 //the last element of infinite list (git)
 //https://en.wikipedia.org/wiki/Persistent_data_structure
-const IO = <T>(a: Undefindable<T>): IO => ({
+const IO = <T>(a: Option<T>): IO => ({
   lastVal: a, //mutable
   list: [], //mutable
 })

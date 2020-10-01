@@ -1,6 +1,6 @@
-declare type Undefindable<T> = NonNullable<T> | undefined;
-declare const IO: <T>(a: Undefindable<T>) => IO;
-declare const next: <T>(a: Undefindable<T>) => (A: IO) => IO;
+declare type Option<T> = NonNullable<T> | undefined;
+declare const IO: <T>(a: Option<T>) => IO;
+declare const next: <T>(a: Option<T>) => (A: IO) => IO;
 interface IO {
     lastVal: unknown;
     list: Function[];
