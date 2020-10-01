@@ -4,7 +4,6 @@ const undefinedCheck = (a) => (a == null); // ==
 const optionMap = (f) => (a) => undefinedCheck(a)
     ? undefined
     : f(a);
-//----------------------------
 // dirty object hack
 const customOperator = (op) => (f) => (set) => Object.defineProperty(set, op, {
     value: function (a) {

@@ -1,7 +1,7 @@
 import { IO, next } from "./io-next.js";
 
-const right = (a: any) => (b: any) => b;
-const third = (a: any) => (b: any) => (c: any) => c;
+const right = <T>(a: T) => <U>(b: U) => b;
+const third = <T>(a: T) => <U>(b: U) => <V>(c: V) => c;
 
 const replace = (arr: number[]) =>
   (index: number) =>
