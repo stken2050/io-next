@@ -8,7 +8,7 @@ const log = (msg: unknown) =>
 type Option<T> = NonNullable<T> | undefined;
 
 const undefinedCheck = <T>(a: Option<T>) =>
-  (a == null);// ==
+  (a === undefined) || (a === null);
 
 const optionMap = (f: Function) =>
   <T>(a: Option<T>) =>

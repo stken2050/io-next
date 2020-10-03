@@ -1,6 +1,6 @@
 const right = (a) => (b) => b;
 const log = (msg) => right(console.log(msg))(msg);
-const undefinedCheck = (a) => (a == null); // ==
+const undefinedCheck = (a) => (a === undefined) || (a === null);
 const optionMap = (f) => (a) => undefinedCheck(a)
     ? undefined
     : f(a);
