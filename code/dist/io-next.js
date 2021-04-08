@@ -12,7 +12,7 @@ const customOperator = (op) => (f) => (set) => Object.defineProperty(set, op, {
 });
 //-------------------------
 const flatRegister = (f) => (A) => // flatRegister(f): A => B
- (B => right(A.list = //mutable
+ ((B) => right(A.list = //mutable
     A.list //add B-function to A-list
         .concat((a) => flatTrigger(optionMap(f)(a))(B)))((flatTrigger(optionMap(f)(A.lastVal))(B))))(IO(undefined)); //B = new IO
 const flatTrigger = (a) => (A) => (aObject => // object | IO
@@ -25,9 +25,9 @@ const trigger = (a) => (A) => right(right(A.lastVal = a) //mutable
 //spreadsheel cell corresponds to IO
 //the last element of infinite list (git)
 //https://en.wikipedia.org/wiki/Persistent_data_structure
-const IO = (a) => customOperator('>>')(flatRegister)(({
+const IO = (a) => (customOperator('>>')(flatRegister)({
     lastVal: a,
-    list: [],
+    list: [] //mutable
 }));
 const next = flatTrigger;
 export { IO, next };

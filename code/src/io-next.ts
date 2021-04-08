@@ -30,7 +30,7 @@ const customOperator =
 
 const flatRegister = (f: Function) =>
   (A: IO) => // flatRegister(f): A => B
-    (B => right
+    ((B: IO) => right
       (A.list = //mutable
         A.list//add B-function to A-list
           .concat(<T>(a: Option<T>) => B|> flatTrigger(a |> optionMap(f))))
@@ -53,11 +53,11 @@ const trigger = <T>(a: Option<T>) =>
 //spreadsheel cell corresponds to IO
 //the last element of infinite list (git)
 //https://en.wikipedia.org/wiki/Persistent_data_structure
-const IO = <T>(a: Option<T>): IO => ({
-  lastVal: a, //mutable
-  list: [], //mutable
-})
-  |> customOperator('>>')(flatRegister);
+const IO = <T>(a: Option<T>) =>
+  ({
+    lastVal: a, //mutable
+    list: [] //mutable
+  } |> customOperator('>>')(flatRegister)) as IO;
 
 const next = flatTrigger;
 

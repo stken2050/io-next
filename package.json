@@ -33,6 +33,6 @@
   "dependencies": {},
   "devDependencies": {
     "@types/node": "*",
-    "typescript": "https://typescript.visualstudio.com/cf7ac146-d525-443c-b23c-0d58337efebc/_apis/build/builds/74014/artifacts?artifactName=tgz&fileId=53B4D99407A93B4AF6FAEF8437B02126A8C7FEC62F1C3307DAA098F75D2CE5D602&fileName=/typescript-4.0.0-insiders.20200515.tgz"
+    "typescript": "https://typescript.visualstudio.com/cf7ac146-d525-443c-b23c-0d58337efebc/_apis/build/builds/100059/artifacts?artifactName=tgz&fileId=D3836CF7DD5F6438481C5BCDBEE7A63AB21880164FEFD2BD75085B15EB974FCE02&fileName=/typescript-4.3.0-insiders.20210404.tgz"
   }
 }
