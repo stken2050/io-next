@@ -30,9 +30,7 @@
     "url": "https://github.com/stken2050/io-next/issues"
   },
   "homepage": "https://github.com/stken2050/io-next#readme",
-  "dependencies": {},
   "devDependencies": {
-    "@types/node": "*",
-    "typescript": "https://typescript.visualstudio.com/cf7ac146-d525-443c-b23c-0d58337efebc/_apis/build/builds/100059/artifacts?artifactName=tgz&fileId=D3836CF7DD5F6438481C5BCDBEE7A63AB21880164FEFD2BD75085B15EB974FCE02&fileName=/typescript-4.3.0-insiders.20210404.tgz"
+    "typescript": "https://typescript.visualstudio.com/cf7ac146-d525-443c-b23c-0d58337efebc/_apis/build/builds/101226/artifacts?artifactName=tgz&fileId=52B72C8EFE9367109126FF631C5367AC4E9A15482B3AD34AB472EEEEED73464F02&fileName=/typescript-4.3.0-insiders.20210418.tgz"
   }
 }
