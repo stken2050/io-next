@@ -31,6 +31,6 @@
   },
   "homepage": "https://github.com/stken2050/io-next#readme",
   "devDependencies": {
-    "typescript": "https://typescript.visualstudio.com/cf7ac146-d525-443c-b23c-0d58337efebc/_apis/build/builds/101226/artifacts?artifactName=tgz&fileId=52B72C8EFE9367109126FF631C5367AC4E9A15482B3AD34AB472EEEEED73464F02&fileName=/typescript-4.3.0-insiders.20210418.tgz"
+    "typescript": "npm:@typescript-deploys/pr-build@4.3.0-pr-38305-57"
   }
 }
