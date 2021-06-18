@@ -27,8 +27,6 @@ const customOperator = op => f => set =>
   a |> next(3);
 
   const Log = b['>>'](console.log);
-
-
 }
 
 {
@@ -217,6 +215,5 @@ Function.prototype |>
 
   a|> next(10);
   a|> next(100);
-
 }
 
